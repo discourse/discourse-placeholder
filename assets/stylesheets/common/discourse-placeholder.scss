@@ -1,0 +1,32 @@
+.discourse-placeholder {
+  padding: 0.5em;
+  border: 1px solid $primary-medium;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  flex-direction: column;
+
+  .discourse-placeholder-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.5em;
+    width: 100%;
+
+    &:last-child {
+      margin: 0;
+    }
+  }
+
+  .discourse-placeholder-name {
+    width: 200px;
+  }
+
+  .discourse-placeholder-value {
+    margin-left: 1em;
+    width: 100%;
+    padding: 0.5em;
+    color: $primary;
+    border: 1px solid $primary-low;
+  }
+}

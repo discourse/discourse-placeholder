@@ -1,0 +1,4 @@
+en:
+  js:
+    discourse_placeholder:
+      placeholder: "String to use as replacement"

@@ -1,0 +1,4 @@
+plugins:
+  discourse_placeholder_enabled:
+    default: true
+    client: true
