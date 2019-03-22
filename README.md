@@ -1,6 +1,6 @@
 # discourse-placeholder
 
-discourse-placeholder is a plugin for ...
+Replace any %STRING% by another in your post.
 
 ## Installation
 
@@ -9,6 +9,8 @@ how-to from the official Discourse Meta, using `git clone https://github.com/jja
 as the plugin command.
 
 ## Usage
+
+[placeholder=NAME,EMAIL]
 
 ## Feedback
 
