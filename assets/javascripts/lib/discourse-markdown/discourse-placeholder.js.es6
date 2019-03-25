@@ -9,7 +9,10 @@ function addPlaceholder(buffer, matches, state) {
 
   let token;
 
-  const keys = parsed.attrs.keys.split(",").filter(x => x);
+  const keys = parsed.attrs.keys
+    .split(",")
+    .filter(x => x)
+    .map(x => state.md.utils.escapeHtml(x));
 
   token = new state.Token("div_open", "div", 1);
   token.attrs = [
