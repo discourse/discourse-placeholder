@@ -5,7 +5,7 @@ Replace any %STRING% by another in your post.
 ## Installation
 
 Follow [Install a Plugin](https://meta.discourse.org/t/install-a-plugin/19157)
-how-to from the official Discourse Meta, using `git clone https://github.com/jjaffeux/discourse-placeholder.git`
+how-to from the official Discourse Meta, using `git clone https://github.com/discourse/discourse-placeholder.git`
 as the plugin command.
 
 ## Usage
