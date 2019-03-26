@@ -1,18 +1,14 @@
 (function($) {
-  function processElement($element, options = {}) {
-    let $cooked = $element.parents(".cooked");
-
+  function processElement($element, $cooked, options = {}) {
     $cooked
       .html((_, html) => {
-        options.keys.forEach(key => {
-          const pattern = `(%${key}%)`;
-          const regex = new RegExp(pattern, "g");
+        const pattern = `(%${options.key}%)`;
+        const regex = new RegExp(pattern, "g");
 
-          html = html.replace(
-            regex,
-            `<span class="discourse-placeholder-item" data-key="${key}">$1</span>`
-          );
-        });
+        html = html.replace(
+          regex,
+          `<span class="discourse-placeholder-item" data-key="${options.key}">${options.default || "$1"}</span>`
+        );
 
         return html;
       })
@@ -34,17 +30,16 @@
       });
   }
 
-  $.fn.applyDiscoursePlaceholder = function() {
+  $.fn.applyDiscoursePlaceholder = function($cooked) {
     return this.each(function() {
       const $element = $(this);
 
       const options = {};
-      options.keys = $element
-        .attr("data-keys")
-        .split(",")
-        .filter(x => x);
+      options.key = $element.attr("data-key")
+      options.default = $element.attr("data-default")
+      options.description = $element.attr("data-description")
 
-      processElement($element, options);
+      processElement($element, $cooked, options);
     });
   };
 })(jQuery);

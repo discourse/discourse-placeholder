@@ -1,53 +1,59 @@
 import { parseBBCodeTag } from "pretty-text/engines/discourse-markdown/bbcode-block";
 
 function addPlaceholder(buffer, matches, state) {
-  let parsed = parseBBCodeTag(
-    `[placeholder keys${matches[1]}]`,
+  const parsed = parseBBCodeTag(
+    `[placeholder key${matches[1]}]`,
     0,
-    matches[1].length + 18
+    matches[1].length + 17
   );
 
+  if (!parsed.attrs.key) {
+    return;
+  }
+
+  const key = state.md.utils.escapeHtml(parsed.attrs.key);
+
   let token;
-
-  const keys = parsed.attrs.keys
-    .split(",")
-    .filter(x => x)
-    .map(x => state.md.utils.escapeHtml(x));
-
   token = new state.Token("div_open", "div", 1);
-  token.attrs = [
-    ["data-keys", keys.join(",")],
-    ["class", "discourse-placeholder"]
-  ];
+  token.attrs = [["class", "discourse-placeholder"], ["data-key", key]];
+
+  let defaultValue;
+  if (parsed.attrs.default) {
+    defaultValue = state.md.utils.escapeHtml(parsed.attrs.default);
+    token.attrs.push(["data-default", defaultValue]);
+  }
+
+  let description;
+  if (parsed.attrs.description) {
+    description = state.md.utils.escapeHtml(parsed.attrs.description);
+    token.attrs.push(["data-description", description]);
+  }
+
   buffer.push(token);
 
-  keys.forEach(key => {
-    token = new state.Token("div_open", "div", 1);
-    token.attrs = [["class", "discourse-placeholder-container"]];
-    buffer.push(token);
+  token = new state.Token("span_open", "span", 1);
+  token.attrs = [["class", "discourse-placeholder-name"]];
+  buffer.push(token);
 
-    token = new state.Token("span_open", "span", 1);
-    token.attrs = [["class", "discourse-placeholder-name"]];
-    buffer.push(token);
+  token = new state.Token("text", "", 0);
+  token.content = key;
+  buffer.push(token);
 
-    token = new state.Token("text", "", 0);
-    token.content = key;
-    buffer.push(token);
+  token = new state.Token("span_close", "span", -1);
+  buffer.push(token);
 
-    token = new state.Token("span_close", "span", -1);
-    buffer.push(token);
+  token = new state.Token("input", "input", 0);
+  token.attrs = [["class", "discourse-placeholder-value"], ["data-key", key]];
 
-    token = new state.Token("input", "input", 0);
-    token.attrs = [
-      ["class", "discourse-placeholder-value"],
-      ["data-key", key],
-      ["placeholder", I18n.t("discourse_placeholder.placeholder")]
-    ];
-    buffer.push(token);
+  if (defaultValue) {
+    token.attrs.push(["value", defaultValue]);
+  }
 
-    token = new state.Token("div_close", "div", -1);
-    buffer.push(token);
-  });
+  if (description) {
+    token.attrs.push(["placeholder", description]);
+  }
+
+  buffer.push(token);
 
   token = new state.Token("div_close", "div", -1);
   buffer.push(token);
@@ -56,12 +62,14 @@ function addPlaceholder(buffer, matches, state) {
 export function setup(helper) {
   helper.whiteList([
     "div.discourse-placeholder",
-    "div.discourse-placeholder-container",
     "input.discourse-placeholder-value",
     "span.discourse-placeholder-name",
-    "div[data-keys]",
+    "div[data-key]",
+    "div[data-default]",
+    "div[data-description]",
     "input[data-key]",
-    "input[placeholder]"
+    "input[placeholder]",
+    "input[value]"
   ]);
 
   helper.registerOptions((opts, siteSettings) => {

@@ -2,21 +2,8 @@
   padding: 0.5em;
   border: 1px solid $primary-medium;
   display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  flex-direction: column;
-
-  .discourse-placeholder-container {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 0.5em;
-    width: 100%;
-
-    &:last-child {
-      margin: 0;
-    }
-  }
+  align-items: center;
+  justify-content: space-between;
 
   .discourse-placeholder-name {
     width: 200px;

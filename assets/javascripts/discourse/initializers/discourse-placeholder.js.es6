@@ -1,8 +1,8 @@
 import { withPluginApi } from "discourse/lib/plugin-api";
 
 function initializeDiscoursePlaceholder(api) {
-  api.decorateCooked($elem =>
-    $(".discourse-placeholder", $elem).applyDiscoursePlaceholder()
+  api.decorateCooked($cooked =>
+    $(".discourse-placeholder", $cooked).applyDiscoursePlaceholder($cooked)
   );
 }
 

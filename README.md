@@ -10,7 +10,9 @@ as the plugin command.
 
 ## Usage
 
-[placeholder=NAME,EMAIL]
+[placeholder=NAME]
+[placeholder=COUNTRY default=FR]
+[placeholder=SECRET description="Used to open the bank"]
 
 ## Feedback
 
