@@ -1,8 +1,11 @@
 import { withPluginApi } from "discourse/lib/plugin-api";
 
 function initializeDiscoursePlaceholder(api) {
-  api.decorateCooked($cooked =>
-    $(".discourse-placeholder", $cooked).applyDiscoursePlaceholder($cooked)
+  api.decorateCooked(
+    $cooked => {
+      $(".discourse-placeholder", $cooked).applyDiscoursePlaceholder($cooked);
+    },
+    { onlyStream: true }
   );
 }
 
