@@ -1,4 +1,22 @@
 (function($) {
+
+  function processChange($cooked, inputEvent) {
+    const value = inputEvent.target.value;
+    const key = inputEvent.target.dataset.key;
+
+    $cooked
+      .find(`.discourse-placeholder-item[data-key=${key}]`)
+      .each((_, e) => {
+        const $item = $(e);
+
+        if (value && value.length && value !== "none") {
+          $item.text(value);
+        } else {
+          $item.text(`%${key}%`);
+        }
+      });
+  }
+
   function processElement($element, $cooked, options = {}) {
     $cooked
       .html((_, html) => {
@@ -13,20 +31,10 @@
         return html;
       })
       .on("input", ".discourse-placeholder-value", inputEvent => {
-        const value = inputEvent.target.value;
-        const key = inputEvent.target.dataset.key;
-
-        $cooked
-          .find(`.discourse-placeholder-item[data-key=${key}]`)
-          .each((_, e) => {
-            const $item = $(e);
-
-            if (value && value.length) {
-              $item.text(value);
-            } else {
-              $item.text(`%${key}%`);
-            }
-          });
+        processChange($cooked, inputEvent);
+      })
+      .on("change", ".discourse-placeholder-select", inputEvent => {
+        processChange($cooked, inputEvent);
       });
   }
 
