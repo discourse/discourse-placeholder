@@ -8,10 +8,18 @@
   .discourse-placeholder-name {
     width: 200px;
     font-weight: 700;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    margin-right: 0.5em;
+  }
+
+  .discourse-placeholder-value,
+  .discourse-placeholder-select {
+    box-sizing: border-box;
   }
 
   .discourse-placeholder-value {
-    margin-left: 1em;
     width: 100%;
     padding: 0.5em;
     color: $primary;
@@ -19,7 +27,6 @@
   }
 
   .discourse-placeholder-select {
-    margin-left: 1em;
     width: 100%;
     margin: 0.5em 0;
     color: $primary;
