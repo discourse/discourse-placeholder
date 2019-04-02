@@ -23,7 +23,7 @@
         const regex = new RegExp(pattern, "g");
         const value =
           options.default ||
-          (options.defaults.length ? options.defaults[0] : null);
+          (options.defaults.length && !options.description ? options.defaults[0] : null);
 
         html = html.replace(
           regex,
