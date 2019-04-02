@@ -1,5 +1,4 @@
 (function($) {
-
   function processChange($cooked, inputEvent) {
     const value = inputEvent.target.value;
     const key = inputEvent.target.dataset.key;
@@ -22,10 +21,15 @@
       .html((_, html) => {
         const pattern = `(%${options.key}%)`;
         const regex = new RegExp(pattern, "g");
+        const value =
+          options.default ||
+          (options.defaults.length ? options.defaults[0] : null);
 
         html = html.replace(
           regex,
-          `<span class="discourse-placeholder-item" data-key="${options.key}">${options.default || "$1"}</span>`
+          `<span class="discourse-placeholder-item" data-key="${
+            options.key
+          }">${value || "$1"}</span>`
         );
 
         return html;
@@ -43,9 +47,10 @@
       const $element = $(this);
 
       const options = {};
-      options.key = $element.attr("data-key")
-      options.default = $element.attr("data-default")
-      options.description = $element.attr("data-description")
+      options.key = $element.attr("data-key");
+      options.default = $element.attr("data-default");
+      options.defaults = ($element.attr("data-defaults") || "").split(",");
+      options.description = $element.attr("data-description");
 
       processElement($element, $cooked, options);
     });
