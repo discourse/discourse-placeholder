@@ -22,14 +22,18 @@
   .discourse-placeholder-value {
     width: 100%;
     padding: 0.5em;
+    line-height: $line-height-small;
     color: $primary;
-    border: 1px solid $primary-low;
+    background-color: $secondary;
+    border: 1px solid $primary-medium;
   }
 
   .discourse-placeholder-select {
     width: 100%;
     margin: 0.5em 0;
+    line-height: $line-height-small;
     color: $primary;
-    border: 1px solid $primary-low;
+    background-color: $secondary;
+    border: 1px solid $primary-medium;
   }
 }
