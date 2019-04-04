@@ -1,58 +1,143 @@
 (function($) {
-  function processChange($cooked, inputEvent) {
+  const VALID_TAGS = "h1, h2, h3, h4, h5, h6, p, code, blockquote";
+  const DELMITER = "=";
+
+  // http://davidwalsh.name/javascript-debounce-function
+  function debounce(func, wait, immediate) {
+    let timeout;
+
+    return function() {
+      const context = this,
+        args = arguments;
+
+      const later = function() {
+        timeout = null;
+        if (!immediate) func.apply(context, args);
+      };
+
+      const callNow = immediate && !timeout;
+
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
+
+      if (callNow) func.apply(context, args);
+    };
+  }
+
+  function processChange($cooked, inputEvent, mappings) {
     const value = inputEvent.target.value;
     const key = inputEvent.target.dataset.key;
 
-    $cooked
-      .find(`.discourse-placeholder-item[data-key=${key}]`)
-      .each((_, e) => {
-        const $item = $(e);
+    let newValue;
+    if (value && value.length && value !== "none") {
+      newValue = value;
+    } else {
+      newValue = `${DELMITER}${key}${DELMITER}`;
+    }
 
-        if (value && value.length && value !== "none") {
-          $item.text(value);
-        } else {
-          $item.text(`%${key}%`);
+    $cooked.find(VALID_TAGS).each((index, elem) => {
+      let replaced = false;
+      const mapping = mappings[index];
+      let newInnnerHTML = elem.innerHTML;
+      let diff = 0;
+
+      mapping.forEach(m => {
+        if (m.pattern !== `${DELMITER}${key}${DELMITER}`) {
+          m.position = m.position + diff;
+          return;
         }
+
+        replaced = true;
+
+        const previousLength = m.length;
+        const prefix = newInnnerHTML.slice(0, m.position + diff);
+        const suffix = newInnnerHTML.slice(
+          m.position + diff + m.length,
+          newInnnerHTML.length
+        );
+        newInnnerHTML = `${prefix}${newValue}${suffix}`;
+
+        m.length = newValue.length;
+        m.position = m.position + diff;
+        diff = diff + newValue.length - previousLength;
       });
+
+      if (replaced) {
+        elem.innerHTML = newInnnerHTML;
+      }
+    });
   }
 
-  function processElement($element, $cooked, options = {}) {
+  function processPlaceholders(placeholders, $cooked, mappings) {
+    const keys = Object.keys(placeholders);
+    const pattern = `(${DELMITER}(?:${keys.join("|")})${DELMITER})`;
+    const regex = new RegExp(pattern, "g");
+
+    $cooked.find(VALID_TAGS).each((index, elem) => {
+      const innerHTML = elem.innerHTML;
+      let match;
+
+      mappings[index] = mappings[index] || [];
+
+      while ((match = regex.exec(innerHTML)) != null) {
+        mappings[index].push({
+          pattern: match[1],
+          position: match.index,
+          length: match[1].length
+        });
+      }
+    });
+
     $cooked
-      .html((_, html) => {
-        const pattern = `(%${options.key}%)`;
-        const regex = new RegExp(pattern, "g");
-        const value =
-          options.default ||
-          (options.defaults.length && !options.description ? options.defaults[0] : null);
+      .on(
+        "input",
+        ".discourse-placeholder-value",
+        debounce(inputEvent => {
+          processChange($cooked, inputEvent, mappings);
+        }, 250)
+      )
+      .on(
+        "change",
+        ".discourse-placeholder-select",
+        debounce(inputEvent => {
+          processChange($cooked, inputEvent, mappings);
+        }, 250)
+      );
 
-        html = html.replace(
-          regex,
-          `<span class="discourse-placeholder-item" data-key="${
-            options.key
-          }">${value || "$1"}</span>`
-        );
+    // trigger fake event to setup initial state
+    Object.keys(placeholders).forEach(placeholderKey => {
+      const placeholder = placeholders[placeholderKey];
 
-        return html;
-      })
-      .on("input", ".discourse-placeholder-value", inputEvent => {
-        processChange($cooked, inputEvent);
-      })
-      .on("change", ".discourse-placeholder-select", inputEvent => {
-        processChange($cooked, inputEvent);
-      });
+      const value =
+        placeholder.default ||
+        (placeholder.defaults.length && !placeholder.description
+          ? placeholder.defaults[0]
+          : null);
+
+      processChange(
+        $cooked,
+        { target: { value, dataset: { key: placeholderKey } } },
+        mappings
+      );
+    });
   }
 
   $.fn.applyDiscoursePlaceholder = function($cooked) {
-    return this.each(function() {
+    const mappings = [];
+    const placeholders = {};
+
+    this.each(function() {
       const $element = $(this);
 
-      const options = {};
-      options.key = $element.attr("data-key");
-      options.default = $element.attr("data-default");
-      options.defaults = ($element.attr("data-defaults") || "").split(",");
-      options.description = $element.attr("data-description");
-
-      processElement($element, $cooked, options);
+      placeholders[$element.attr("data-key")] = {
+        default: $element.attr("data-default"),
+        defaults: ($element.attr("data-defaults") || "").split(","),
+        description: $element.attr("data-description")
+      };
     });
+
+    if (Object.keys(placeholders).length > 0) {
+      processPlaceholders(placeholders, $cooked, mappings);
+    }
   };
 })(jQuery);
