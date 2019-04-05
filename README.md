@@ -1,6 +1,6 @@
 # discourse-placeholder
 
-Replace any %STRING% by another in your post.
+Replace any =STRING= by another in your post.
 
 ## Installation
 
@@ -13,6 +13,8 @@ as the plugin command.
 [placeholder=NAME]
 [placeholder=COUNTRY default=FR]
 [placeholder=SECRET description="Used to open the bank"]
+
+I'm =NAME=, I come from =COUNTRY= let me tell you my secret: =SECRET==
 
 ## Feedback
 
