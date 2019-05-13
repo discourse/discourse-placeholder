@@ -1,6 +1,6 @@
 (function($) {
   const VALID_TAGS = "h1, h2, h3, h4, h5, h6, p, code, blockquote, .md-table, li";
-  const DELMITER = "=";
+  const DELIMITER = "=";
 
   // http://davidwalsh.name/javascript-debounce-function
   function debounce(func, wait, immediate) {
@@ -32,7 +32,7 @@
     if (value && value.length && value !== "none") {
       newValue = value;
     } else {
-      newValue = `${DELMITER}${key}${DELMITER}`;
+      newValue = `${DELIMITER}${key}${DELIMITER}`;
     }
 
     $cooked.find(VALID_TAGS).each((index, elem) => {
@@ -42,7 +42,7 @@
       let diff = 0;
 
       mapping.forEach(m => {
-        if (m.pattern !== `${DELMITER}${key}${DELMITER}`) {
+        if (m.pattern !== `${DELIMITER}${key}${DELIMITER}`) {
           m.position = m.position + diff;
           return;
         }
@@ -70,8 +70,10 @@
 
   function processPlaceholders(placeholders, $cooked, mappings) {
     const keys = Object.keys(placeholders);
-    const pattern = `(${DELMITER}(?:${keys.join("|")})${DELMITER})`;
+    const pattern = `(${DELIMITER}(?:${keys.join("|")})${DELIMITER})`;
     const regex = new RegExp(pattern, "g");
+
+    console.log(pattern)
 
     $cooked.find(VALID_TAGS).each((index, elem) => {
       const innerHTML = elem.innerHTML;
