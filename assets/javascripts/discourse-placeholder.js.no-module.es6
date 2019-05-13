@@ -1,5 +1,5 @@
 (function($) {
-  const VALID_TAGS = "h1, h2, h3, h4, h5, h6, p, code, blockquote, .md-table";
+  const VALID_TAGS = "h1, h2, h3, h4, h5, h6, p, code, blockquote, .md-table, li";
   const DELMITER = "=";
 
   // http://davidwalsh.name/javascript-debounce-function
