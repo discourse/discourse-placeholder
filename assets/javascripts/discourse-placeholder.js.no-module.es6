@@ -73,8 +73,6 @@
     const pattern = `(${DELIMITER}(?:${keys.join("|")})${DELIMITER})`;
     const regex = new RegExp(pattern, "g");
 
-    console.log(pattern)
-
     $cooked.find(VALID_TAGS).each((index, elem) => {
       const innerHTML = elem.innerHTML;
       let match;
